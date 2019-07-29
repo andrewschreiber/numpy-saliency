@@ -1,5 +1,5 @@
 # numpy-saliency
-Reference implementation of saliency map (aka attribution map) techniques for deep learning in Python 3.6.
+Reference implementation of saliency map (aka attribution map) techniques for deep learning in Python 3.6. Uses MNIST and LeNet 5.
 
 ## Usage
 Run
