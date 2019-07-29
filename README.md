@@ -1,15 +1,18 @@
 # numpy-saliency
 Reference implementation of saliency map (aka attribution map) techniques in Python 3.6.
 
-Framew
+## Implemented
 
-Implemented
-[x] Vanilla Gradients
+Vanilla Gradients
 
-Upcoming
-[ ] Integrated Gradients
-[ ]
+
+## Upcoming
+
+Integrated Gradients
+
+Adversarial Saliency maps
 
 ### Inspiration
 https://github.com/utkuozbulak/pytorch-cnn-visualizations
+
 https://github.com/gary30404
