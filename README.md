@@ -1,10 +1,15 @@
 # numpy-saliency
 Reference implementation of saliency map (aka attribution map) techniques in Python 3.6.
 
+## Usage
+Run
+```python main.py```
+
+You can train the model, test the model (using pretrained weights), and/or generate a saliency map via uncommenting the code.
+
 ## Implemented
 
 Vanilla Gradients
-
 
 ## Upcoming
 
