@@ -26,12 +26,10 @@ testing_labels = np.eye(10)[test_labels]
 
 net = LeNet()
 
-# net.load("pretrained_weights.pkl")
+# net.load("weights.pkl")
 
-print('Training Lenet...')
-net.train(training_data[:1000], training_labels[:1000], 32, 1, 'weights.pkl')
+net.train(training_data[:100], training_labels[:100], 32, 3, 'weights.pkl')
 
-print('Testing Lenet...')
-# net.test(testing_data, testing_labels, 100)
+net.test(testing_data[:100], testing_labels[:100])
 
 # save_vanilla_gradient(net, training_data[:25], training_labels[:25], 5)

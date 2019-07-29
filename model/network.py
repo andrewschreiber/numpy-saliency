@@ -48,6 +48,7 @@ class LeNet:
 
     def train(self, training_data, training_label, batch_size, epochs,
               weights_path):
+        print("Training LeNet...")
         total_acc = 0
         for epoch in range(epochs):
             # batch training data
@@ -78,19 +79,21 @@ class LeNet:
                         dy = dout
 
                 # print performance
-                loss /= batch_size
-                batch_acc = float(acc)/float(batch_size)
+                loss /= len(data)
+                batch_acc = float(acc)/float(len(data))
                 train_acc = float(total_acc) / \
-                    float((batch_index+batch_size)*(epoch+1))
+                    float((batch_index+len(data)+epoch*len(training_data)))
+
                 print(('| Epoch: {0:d}/{1:d} | Iter:{2:d} | Loss: {3:.2f} | ' +
-                       'BatchAcc: {4:.2f} | TrainAcc: {5:.2f} |')
-                      .format(epoch, epochs, batch_index+batch_size,
+                      'BatchAcc: {4:.2f} | TrainAcc: {5:.2f} |')
+                      .format(epoch+1, epochs, batch_index+len(data),
                               loss, batch_acc, train_acc))
 
-        # save parameters after each epoch
-        layers = [layer.parameters() for layer in self.layers]
-        with open(weights_path, 'wb') as handle:
-            pickle.dump(layers, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            # save parameters after each epoch
+            print("Saving model to", weights_path)
+            layers = [layer.parameters() for layer in self.layers]
+            with open(weights_path, 'wb') as handle:
+                pickle.dump(layers, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def forward(self, x):
         for l in range(len(self.layers)):
@@ -103,3 +106,16 @@ class LeNet:
         digit = np.argmax(output)
         probability = output[0, digit]
         return digit, probability
+
+    def test(self, data, labels):
+        print("Testing LeNet...")
+        total_acc = 0
+        test_size = len(data)
+        for i in range(test_size):
+            x = data[i]
+            y = labels[i]
+            if np.argmax(self.forward(x)) == np.argmax(y):
+                total_acc += 1
+
+        print("== Correct: {}/{}. Accuracy: {} =="
+              .format(total_acc, test_size, total_acc/test_size))
