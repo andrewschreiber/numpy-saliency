@@ -11,8 +11,9 @@ Run
 ```
 git clone https://github.com/andrewschreiber/numpy-saliency.git
 cd numpy-saliency
-pip3 install -r requirements.txt
-python3 main.py
+# Activate your Python 3.6 environment
+pip install -r requirements.txt
+python main.py
 ```
 
 You can train the model, test the model (using pretrained weights),
