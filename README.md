@@ -1,7 +1,7 @@
 # numpy-saliency
 
 Reference implementation of saliency map (aka attribution map)
-techniques for deep learning in Python 3.6. Uses MNIST and LeNet 5.
+techniques for deep learning in Python 3. Uses MNIST and LeNet 5. Tested with 3.6 & 3.7.
 
 
 ## Usage
@@ -11,7 +11,7 @@ Run
 ```
 git clone https://github.com/andrewschreiber/numpy-saliency.git
 cd numpy-saliency
-# Activate your Python 3.6 environment
+# Activate your Python 3 environment
 pip install -r requirements.txt
 python main.py
 ```
