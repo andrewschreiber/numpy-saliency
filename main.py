@@ -28,7 +28,7 @@ net = LeNet()
 
 net.load("10epoch_weights.pkl")
 
-#net.train(training_data[:100], training_labels[:100], 32, 3, 'weights.pkl')
+net.train(training_data, training_labels, 32, 3, 'weights.pkl')
 
 net.test(testing_data[:500], testing_labels[:500])
 
