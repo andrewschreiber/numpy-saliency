@@ -28,8 +28,8 @@ net = LeNet()
 
 net.load("10epoch_weights.pkl")
 
-net.train(training_data, training_labels, 32, 3, 'weights.pkl')
+net.train(training_data, training_labels, 32, 10, 'weights.pkl')
 
-net.test(testing_data[:500], testing_labels[:500])
+net.test(testing_data[:50], testing_labels[:50])
 
 # save_vanilla_gradient(net, training_data[:25], training_labels[:25], 5)
