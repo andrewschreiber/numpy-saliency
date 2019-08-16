@@ -9,7 +9,7 @@ class LeNet5:
        http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
     """
 
-    def __init__(self):
+    def __init__(self, weights_path=None):
         lr = 0.01
         layers = []
         layers.append(Conv2D(n_filter=6, n_channel=1,
@@ -36,8 +36,10 @@ class LeNet5:
             num_inputs=84, num_outputs=10, learning_rate=lr, name='dense7'))
         layers.append(Softmax())
         self.layers = layers
+        if weights_path is not None:
+            self._load(weights_path)
 
-    def load(self, weights_path):
+    def _load(self, weights_path):
         with open(weights_path, 'rb') as handle:
             b = pickle.load(handle)
         self.layers[0].load(b[0]['conv1.weights'], b[0]['conv1.bias'])

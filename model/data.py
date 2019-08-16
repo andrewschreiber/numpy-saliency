@@ -13,9 +13,9 @@ def mnist_train_test_sets():
 
     print('Normalizing pixel values to range 0-1')
     train_images -= np.mean(np.int16(train_images), dtype=np.int16)
-    train_images = train_images/np.std(train_images, dtype=np.int16)
+    train_images = train_images/np.int16(np.std(train_images))
     test_images -= np.mean(np.int16(test_images), dtype=np.int16)
-    test_images = test_images/np.std(test_images, dtype=np.int16)
+    test_images = test_images/np.int16(np.std(test_images))
 
     print("Reshaping data for model, which expects a color channel")
     # MNIST is black and white, 1 color channel
