@@ -12,7 +12,7 @@ def save_vanilla_gradient(network, data, labels):
 
     # Create a saliency map for each data point
     for i, image in enumerate(data):
-        # Put input into layers
+        # Forward pass on image
         output = image
         for l in range(len(network.layers)):
             output = network.layers[l].forward(output)
@@ -23,9 +23,9 @@ def save_vanilla_gradient(network, data, labels):
         for l in range(len(network.layers)-1, -1, -1):
             dout = network.layers[l].backward(dy)
             dy = dout
+        raw_saliency_map = dout
 
         # Process saliency map
-        raw_saliency_map = dout
         trimmed_saliency_map = trim_map(raw_saliency_map)
         saliency_map = normalize_array(trimmed_saliency_map)
 
@@ -37,7 +37,7 @@ def save_vanilla_gradient(network, data, labels):
         # Export saliency map renderings
         filename = "index-{0}_class-{1}_vanilla".format(
             str(i), str(np.argmax(label_one_hot)))
-        save_gradient_overlay_images(image, saliency_map, filename)
+        save_gradient_images(image, saliency_map, filename)
 
         print("Saved Vanilla Gradient image to results folder")
 
@@ -61,21 +61,6 @@ def normalize_array(arr):
     arr = arr - arr.min()
     arr /= arr.max()
     return arr
-
-
-def save_gradient_images(gradient, file_name):
-    """
-        Exports the original gradient image
-
-    Args:
-        gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
-        file_name (str): File name to be exported
-    """
-    # Normalize
-    gradient = normalize_array(gradient)
-    # Save image
-    path_to_file = os.path.join(RESULTS_FOLDER, file_name + '.jpg')
-    save_image(gradient, path_to_file)
 
 
 def save_image(im, path):
@@ -120,17 +105,17 @@ def format_np_output(np_arr):
     return np_arr
 
 
-def save_gradient_overlay_images(org_img, saliency_map, file_name):
+def save_gradient_images(org_img, saliency_map, file_name):
     """
         Saves saliency map and overlay on the original image
 
     Args:
         org_img (PIL img): Original image
-        activation_map (numpy arr): Activation map (grayscale) 0-255
+        saliency_map (numpy arr): Saliency map (grayscale) 0-255
         file_name (str): File name of the exported image
     """
 
-    # Grayscale activation map
+    # Grayscale saliency map
     heatmap, heatmap_on_image = apply_colormap_on_image(
         org_img, saliency_map, 'RdBu')
 
@@ -149,20 +134,20 @@ def save_gradient_overlay_images(org_img, saliency_map, file_name):
 
     # Save grayscale heatmap
     # path_to_file = os.path.join(RESULTS_FOLDER, file_name+'_grayscale.png')
-    # save_image(activation_map, path_to_file)
+    # save_image(saliency_map, path_to_file)
 
 
-def apply_colormap_on_image(org_im, activation, colormap_name):
+def apply_colormap_on_image(org_im, saliency_map, colormap_name):
     """
         Apply heatmap on image
     Args:
         org_img (PIL img): Original image
-        activation_map (numpy arr): Activation map (grayscale) 0-255
+        saliency_map (numpy arr): Saliency map (grayscale) 0-255
         colormap_name (str): Name of the colormap
     """
     # Get colormap
     color_map = mpl_color_map.get_cmap(colormap_name)
-    no_trans_heatmap = color_map(activation)
+    no_trans_heatmap = color_map(saliency_map)
     # Change alpha channel in colormap to make sure original image is displayed
     heatmap = copy.copy(no_trans_heatmap)
     heatmap[:, :, 3] = 0.5
