@@ -3,6 +3,7 @@
 Reference implementation of saliency map (aka attribution map)
 techniques for deep learning in Python 3. Uses MNIST and LeNet 5. Tested with 3.6 & 3.7.
 
+![](https://raw.githubusercontent.com/andrewschreiber/numpy-saliency/master/example_heatmap.png)
 
 ## Usage
 
