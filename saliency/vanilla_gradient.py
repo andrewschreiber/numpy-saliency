@@ -4,43 +4,54 @@ import matplotlib.cm as mpl_color_map
 import os
 import copy
 
+RESULTS_FOLDER = "results"
 
-def save_vanilla_gradient(network, data, labels, target_class):
+
+def save_vanilla_gradient(network, data, labels):
     """ Implements gradient visualization with vanilla backprop. """
 
-    # Extract image and labels from data that match target_class
-    target_indexes = [i for i in range(len(labels))
-                      if np.argmax(labels[i]) == target_class]
-    label_one_hot = labels[target_indexes[0]]
-    target_images = [data[index] for index in target_indexes]
-    for i, digit_img in enumerate(target_images):
+    # Create a saliency map for each data point
+    for i, image in enumerate(data):
         # Put input into layers
-        output = digit_img
+        output = image
         for l in range(len(network.layers)):
             output = network.layers[l].forward(output)
 
         # Backprop to get gradient
+        label_one_hot = labels[i]
         dy = np.array(label_one_hot)
         for l in range(len(network.layers)-1, -1, -1):
             dout = network.layers[l].backward(dy)
             dy = dout
 
-        # Remove color channel, zero padding
-        vertical_trimmed = dout[0][2:30]
-        horizontal_trimmed = []
-        for row in vertical_trimmed:
-            horizontal_trimmed.append(row[2:30])
-        trimmed = np.array(horizontal_trimmed)
+        # Process saliency map
+        raw_saliency_map = dout
+        trimmed_saliency_map = trim_map(raw_saliency_map)
+        saliency_map = normalize_array(trimmed_saliency_map)
 
-        im = normalize_array(digit_img)
-        im = format_np_output(im)
-        im = Image.fromarray(im)
-        norm_gradient = normalize_array(trimmed)
+        # Process data image for rendering
+        image = normalize_array(image)
+        image = format_np_output(image)
+        image = Image.fromarray(image)
 
-        save_gradient_overlay_images(im, norm_gradient, "index-" + str(
-            i) + "_class-" + str(target_class) + '_vanilla')
+        # Export saliency map renderings
+        filename = "index-{0}_class-{1}_vanilla".format(
+            str(i), str(np.argmax(label_one_hot)))
+        save_gradient_overlay_images(image, saliency_map, filename)
 
         print("Saved Vanilla Gradient image to results folder")
+
+
+def trim_map(arr):
+    """
+        Remove zero padding & color channel
+    """
+    vertical_trimmed = arr[0][2:30]
+    horizontal_trimmed = []
+    for row in vertical_trimmed:
+        horizontal_trimmed.append(row[2:30])
+    trimmed = np.array(horizontal_trimmed)
+    return trimmed
 
 
 def normalize_array(arr):
@@ -60,12 +71,10 @@ def save_gradient_images(gradient, file_name):
         gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
         file_name (str): File name to be exported
     """
-    if not os.path.exists('results'):
-        os.makedirs('results')
     # Normalize
     gradient = normalize_array(gradient)
     # Save image
-    path_to_file = os.path.join('../results', file_name + '.jpg')
+    path_to_file = os.path.join(RESULTS_FOLDER, file_name + '.jpg')
     save_image(gradient, path_to_file)
 
 
@@ -76,6 +85,8 @@ def save_image(im, path):
         im_as_arr (Numpy array): Matrix of shape DxWxH
         path (str): Path to the image
     """
+    if not os.path.exists(RESULTS_FOLDER):
+        os.makedirs(RESULTS_FOLDER)
     if isinstance(im, (np.ndarray, np.generic)):
         im = format_np_output(im)
         im = Image.fromarray(im)
@@ -109,36 +120,35 @@ def format_np_output(np_arr):
     return np_arr
 
 
-def save_gradient_overlay_images(org_img, activation_map, file_name):
+def save_gradient_overlay_images(org_img, saliency_map, file_name):
     """
-        Saves cam activation map and activation map on the original image
+        Saves saliency map and overlay on the original image
 
     Args:
         org_img (PIL img): Original image
         activation_map (numpy arr): Activation map (grayscale) 0-255
         file_name (str): File name of the exported image
     """
-    if not os.path.exists('../results'):
-        os.makedirs('../results')
 
     # Grayscale activation map
     heatmap, heatmap_on_image = apply_colormap_on_image(
-        org_img, activation_map, 'RdBu')
+        org_img, saliency_map, 'RdBu')
 
     # Save original
-    path_to_file = os.path.join('results', file_name+'_base.png')
+    path_to_file = os.path.join(RESULTS_FOLDER, file_name+'_base.png')
     save_image(org_img, path_to_file)
 
     # Save heatmap on image
-    path_to_file = os.path.join('results', file_name+'_saliency_overlay.png')
+    path_to_file = os.path.join(
+        RESULTS_FOLDER, file_name+'_saliency_overlay.png')
     save_image(heatmap_on_image, path_to_file)
 
     # Save colored heatmap
-    path_to_file = os.path.join('results', file_name+'_saliency.png')
+    path_to_file = os.path.join(RESULTS_FOLDER, file_name+'_saliency.png')
     save_image(heatmap, path_to_file)
 
     # Save grayscale heatmap
-    # path_to_file = os.path.join('results', file_name+'_grayscale.png')
+    # path_to_file = os.path.join(RESULTS_FOLDER, file_name+'_grayscale.png')
     # save_image(activation_map, path_to_file)
 
 

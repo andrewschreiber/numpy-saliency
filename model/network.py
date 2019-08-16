@@ -4,7 +4,7 @@ from model.loss import cross_entropy
 from model.layers import Conv2D, Maxpool2D, Dense, Flatten, ReLu, Softmax
 
 
-class LeNet:
+class LeNet5:
     """Implementation of LeNet 5 for MNIST
        http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
     """
@@ -46,7 +46,7 @@ class LeNet:
         self.layers[9].load(b[9]['dense6.weights'], b[9]['dense6.bias'])
         self.layers[11].load(b[11]['dense7.weights'], b[11]['dense7.bias'])
 
-    def train(self, training_data, training_label, batch_size, epochs,
+    def train(self, training_data, training_labels, batch_size, epochs,
               weights_path):
         print("Training LeNet...")
         total_acc = 0
@@ -57,7 +57,7 @@ class LeNet:
                 acc = 0
 
                 data = training_data[batch_index:batch_index+batch_size]
-                labels = training_label[batch_index:batch_index+batch_size]
+                labels = training_labels[batch_index:batch_index+batch_size]
 
                 # iterate over batch
                 for b in range(len(data)):
@@ -85,7 +85,7 @@ class LeNet:
                     float((batch_index+len(data)+epoch*len(training_data)))
 
                 print(('| Epoch: {0:d}/{1:d} | Iter:{2:d} | Loss: {3:.2f} | ' +
-                      'BatchAcc: {4:.2f} | TrainAcc: {5:.2f} |')
+                       'BatchAcc: {4:.2f} | TrainAcc: {5:.2f} |')
                       .format(epoch+1, epochs, batch_index+len(data),
                               loss, batch_acc, train_acc))
 

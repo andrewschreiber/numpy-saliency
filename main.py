@@ -1,35 +1,29 @@
-import numpy as np
-import mnist
-from model.network import LeNet
+from model.network import LeNet5
 from saliency.vanilla_gradient import save_vanilla_gradient
+from model.data import mnist_train_test_sets
+
+# Get MNIST dataset, preprocessed
+train_images, train_labels, test_images, test_labels = mnist_train_test_sets()
+
+# Load net and 98% acc weights
+net = LeNet5()
+net.load(weights_path="15epoch_weights.pkl")
+
+# Uncomment if you want to train or test from scratch
+# net.train(training_data=train_images, training_labels=train_labels,
+#          batch_size=32, epochs=3, weights_path='weights.pkl')
+
+# net.test(test_images, test_labels)
 
 
-print('Loading data...')
-# [60000, 28, 28]
-train_images = np.int16(mnist.train_images())
-train_labels = np.int16(mnist.train_labels())
-# [10000, 28, 28]
-test_images = np.int16(mnist.test_images())
-test_labels = np.int16(mnist.test_labels())
+# Filter by class
+# target_class = 5
+# target_indexes = [i for i in range(len(labels))
+#                   if np.argmax(labels[i]) == target_class]
+# target_images = [data[index] for index in target_indexes]
+# target_labels = [labels[index] for index in target_indexes]
 
-print('Normalizing data...')
-train_images -= np.int16(np.mean(train_images))
-train_images = train_images/np.int16(np.std(train_images))
-test_images -= np.int16(np.mean(test_images))
-test_images = test_images/np.int16(np.std(test_images))
-
-print("Shaping data...")
-training_data = train_images.reshape(60000, 1, 28, 28)
-training_labels = np.eye(10)[train_labels]
-testing_data = test_images.reshape(10000, 1, 28, 28)
-testing_labels = np.eye(10)[test_labels]
-
-net = LeNet()
-
-net.load("10epoch_weights.pkl")
-
-#net.train(training_data[:100], training_labels[:100], 32, 3, 'weights.pkl')
-
-net.test(testing_data[:500], testing_labels[:500])
-
-# save_vanilla_gradient(net, training_data[:25], training_labels[:25], 5)
+# Generate saliency maps for the first 10 images
+target_images = train_images[:10]
+target_labels = train_labels[:10]
+save_vanilla_gradient(net, target_images, target_labels)
