@@ -147,7 +147,7 @@ class Maxpool2D(Layer):
 
     def parameters(self):
         return
-    
+
     def load(self, weights, bias):
         return
 
@@ -231,7 +231,7 @@ class Softmax(Layer):
         self.out = None
 
     def forward(self, inputs):
-        exp = np.exp(inputs, dtype=np.float)
+        exp = np.exp(inputs, dtype=np.float128)
         self.out = exp/np.sum(exp)
         return self.out
 
@@ -240,6 +240,6 @@ class Softmax(Layer):
 
     def parameters(self):
         return
-    
+
     def load(self, weights, bias):
         return
