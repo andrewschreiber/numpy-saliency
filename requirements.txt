@@ -3,7 +3,7 @@ kiwisolver==1.1.0
 matplotlib==2.2.4
 mnist==0.2.2
 numpy==1.16.4
-Pillow==5.4.1
+Pillow==6.2.0
 pyparsing==2.4.2
 python-dateutil==2.8.0
 pytz==2019.2
